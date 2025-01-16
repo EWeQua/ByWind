@@ -160,6 +160,28 @@ vector_excludes = [
         # Acquired from https://geodienste.bfn.de/ogc/wfs/schutzgebiet
         "source": f"{base_path}/Biosphäre/Kernzone.shp",
     },
+    {
+        # DVOR
+        # Acquired from OSM (see osm-data-acquisition.py)
+        "source": f"{base_path}/DVOR/DVOR.shp",
+        "buffer": 10000
+    },
+    {
+        # VOR
+        # Acquired from OSM (see osm-data-acquisition.py)
+        "source": f"{base_path}/DVOR/VOR.shp",
+        "buffer": 15000
+    },
+    {
+        # Historical
+        # Acquired from OSM (see geofabrik-preprocessing.py)
+        "source": f"{base_path}/OSM/gis_osm_pois_a_free_1.shp",
+    },
+    {
+        # Stream
+        # Acquired from OSM (see geofabrik-preprocessing.py)
+        "source": f"{base_path}/OSM/gis_osm_waterways_free_1.shp",
+    },
 
 ]
 raster_excludes = [
