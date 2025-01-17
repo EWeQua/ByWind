@@ -1,0 +1,6 @@
+name: by-wind
+channels:
+  - conda-forge
+dependencies:
+  - python=3.8.15
+  - glaes=1.2.1

@@ -182,6 +182,12 @@ vector_excludes = [
         # Acquired from OSM (see geofabrik-preprocessing.py)
         "source": f"{base_path}/OSM/gis_osm_waterways_free_1.shp",
     },
+    {
+        # Borders
+        "source": f"{base_path}/ALKIS-Vereinfacht/VerwaltungsEinheit.shp",
+        "where": "art = 'Bundesland'",
+        "buffer": 100
+    },
 
 ]
 raster_excludes = [
