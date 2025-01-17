@@ -207,7 +207,7 @@ variable_excludes = [
     },
 ]
 
-variable_exclude_buffers = range(1300, round(10 * height), 100)
+variable_exclude_buffers = range(0, 2000, 100)
 result_df = pd.DataFrame(index=variable_exclude_buffers,
                          columns=["percent_available_no_forest_use", "percent_available_forest_use"])
 
@@ -222,7 +222,7 @@ for exclude in raster_excludes:
 
 ec.draw()
 plt.show()
-print(ec.areaAvailable)
+print(ec.percentAvailable)
 ec.save(
     f"./output/ByWind_{pixel_resolution}.tif"
 )
