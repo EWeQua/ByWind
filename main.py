@@ -8,7 +8,7 @@ diameter = 155
 radius = diameter / 2
 height = hub_height + radius
 
-pixel_resolution = 100
+raster_size = 10
 
 vector_excludes = [
     {
@@ -184,8 +184,8 @@ vector_excludes = [
     },
     {
         # Borders
-        "source": f"{base_path}/ALKIS-Vereinfacht/VerwaltungsEinheit.shp",
-        "where": "art = 'Bundesland'",
+        # Preprocessed with QGIS: Vector > Geometry Tools > Polygons to Lines
+        "source": f"{base_path}/Grenzen/VG250_STA.shp",
         "buffer": 100
     },
 
@@ -217,7 +217,7 @@ variable_exclude_buffers = range(0, 2000, 100)
 result_df = pd.DataFrame(index=variable_exclude_buffers,
                          columns=["percent_available_no_forest_use", "percent_available_forest_use"])
 
-ec = ExclusionCalculator(f"{base_path}/ALKIS-Vereinfacht/VerwaltungsEinheit.shp", srs=25832, pixelSize=pixel_resolution,
+ec = ExclusionCalculator(f"{base_path}/ALKIS-Vereinfacht/VerwaltungsEinheit.shp", srs=25832, pixelSize=raster_size,
                          where="art = 'Bundesland'")
 for exclude in vector_excludes:
     print(exclude)
@@ -230,13 +230,13 @@ ec.draw()
 plt.show()
 print(ec.percentAvailable)
 ec.save(
-    f"./output/ByWind_{pixel_resolution}.tif"
+    f"./output/ByWind_{raster_size}.tif"
 )
 
 for variable_buffer in variable_exclude_buffers:
     new_ec = ExclusionCalculator(f"{base_path}/ALKIS-Vereinfacht/VerwaltungsEinheit.shp", srs=25832,
-                                 pixelSize=pixel_resolution,
-                                 where="art = 'Bundesland'", initialValue=f"./output/ByWind_{pixel_resolution}.tif")
+                                 pixelSize=raster_size,
+                                 where="art = 'Bundesland'", initialValue=f"./output/ByWind_{raster_size}.tif")
     # Set new variable buffer and exclude variable excludes
     for exclude in variable_excludes:
         # Update buffer
@@ -249,7 +249,7 @@ for variable_buffer in variable_exclude_buffers:
     new_ec.draw()
     plt.show()
     new_ec.save(
-        f"./output/ByWind_{pixel_resolution}_{variable_buffer}_forest_use.tif"
+        f"./output/ByWind_{raster_size}_{variable_buffer}_forest_use.tif"
     )
 
     # Exclude forests
@@ -260,6 +260,6 @@ for variable_buffer in variable_exclude_buffers:
     new_ec.draw()
     plt.show()
     new_ec.save(
-        f"./output/ByWind_{pixel_resolution}_{variable_buffer}_no_forest_use.tif"
+        f"./output/ByWind_{raster_size}_{variable_buffer}_no_forest_use.tif"
     )
     result_df.to_csv(f"./output/ByWind_results.csv")
