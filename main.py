@@ -226,8 +226,8 @@ for exclude in raster_excludes:
     print(exclude)
     ec.excludeRasterType(**exclude)
 
-ec.draw()
-plt.show()
+# ec.draw()
+# plt.show()
 print(ec.percentAvailable)
 ec.save(
     f"./output/ByWind_{raster_size}.tif"
@@ -246,8 +246,8 @@ for variable_buffer in variable_exclude_buffers:
     print(new_ec.percentAvailable)
     result_df.at[variable_buffer, "percent_available_forest_use"] = new_ec.percentAvailable
 
-    new_ec.draw()
-    plt.show()
+    # new_ec.draw()
+    # plt.show()
     new_ec.save(
         f"./output/ByWind_{raster_size}_{variable_buffer}_forest_use.tif"
     )
@@ -257,8 +257,8 @@ for variable_buffer in variable_exclude_buffers:
     print(new_ec.percentAvailable)
     result_df.at[variable_buffer, "percent_available_no_forest_use"] = new_ec.percentAvailable
 
-    new_ec.draw()
-    plt.show()
+    # new_ec.draw()
+    # plt.show()
     new_ec.save(
         f"./output/ByWind_{raster_size}_{variable_buffer}_no_forest_use.tif"
     )
