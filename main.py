@@ -198,10 +198,23 @@ raster_excludes = [
         "value": "(17-]"
     },
 ]
-forest_use = {
+
+forest_functions = ['Bodenschutzwald',
+                    'Erholungswald',
+                    'Lawinenschutzwald',
+                    'regionaler_Klimaschutzwald',
+                    'Schutzwald_fuer_Immissionen_Laerm_und_lokales_Klima',
+                    'Schutzwald_fuer_Lebensraum_Landschaftsbild_Genressourcen_und_historisch_wertvollen_Waldbestand',
+                    'Sichtschutzwald'
+                    ]
+
+restricted_forest_use = [
+    {"source": f"{base_path}/Schutzwald/{function}.shp"} for function in forest_functions
+]
+forest_use = [{
     # Forest
     "source": f"{base_path}/Basis-DLM/veg02_f.shp"
-}
+}]
 variable_excludes = [
     {
         # Buildings residential
@@ -213,9 +226,14 @@ variable_excludes = [
     },
 ]
 
+# Specify what to exclude and in what order
+exclude_configurations = [("forest_use", variable_excludes),
+                          ("restricted_forest_use", restricted_forest_use),
+                          ("no_forest_use", forest_use), ]
+
 variable_exclude_buffers = range(0, 2000, 100)
 result_df = pd.DataFrame(index=variable_exclude_buffers,
-                         columns=["percent_available_no_forest_use", "percent_available_forest_use"])
+                         columns=[name for name, _ in exclude_configurations])
 
 ec = ExclusionCalculator(f"{base_path}/ALKIS-Vereinfacht/VerwaltungsEinheit.shp", srs=25832, pixelSize=raster_size,
                          where="art = 'Bundesland'")
@@ -237,29 +255,19 @@ for variable_buffer in variable_exclude_buffers:
     new_ec = ExclusionCalculator(f"{base_path}/ALKIS-Vereinfacht/VerwaltungsEinheit.shp", srs=25832,
                                  pixelSize=raster_size,
                                  where="art = 'Bundesland'", initialValue=f"./output/ByWind_{raster_size}.tif")
-    # Set new variable buffer and exclude variable excludes
-    for exclude in variable_excludes:
-        # Update buffer
-        exclude.update({'buffer': variable_buffer})
-        print(exclude)
-        new_ec.excludeVectorType(**exclude)
-    print(new_ec.percentAvailable)
-    result_df.at[variable_buffer, "percent_available_forest_use"] = new_ec.percentAvailable
+    for name, excludes in exclude_configurations:
+        for exclude in excludes:
+            # Update buffer
+            if name == 'forest_use':
+                exclude.update({'buffer': variable_buffer})
+            print(exclude)
+            new_ec.excludeVectorType(**exclude)
+        print(new_ec.percentAvailable)
+        result_df.at[variable_buffer, name] = new_ec.percentAvailable
 
-    # new_ec.draw()
-    # plt.show()
-    new_ec.save(
-        f"./output/ByWind_{raster_size}_{variable_buffer}_forest_use.tif"
-    )
-
-    # Exclude forests
-    new_ec.excludeVectorType(**forest_use)
-    print(new_ec.percentAvailable)
-    result_df.at[variable_buffer, "percent_available_no_forest_use"] = new_ec.percentAvailable
-
-    # new_ec.draw()
-    # plt.show()
-    new_ec.save(
-        f"./output/ByWind_{raster_size}_{variable_buffer}_no_forest_use.tif"
-    )
+        # new_ec.draw()
+        # plt.show()
+        new_ec.save(
+            f"./output/ByWind_{raster_size}_{variable_buffer}_{name}.tif"
+        )
     result_df.to_csv(f"./output/ByWind_results.csv")
