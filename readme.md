@@ -25,6 +25,7 @@ See the [Conda installation docs](https://conda.io/docs/user-guide/install/downl
 
 Due to incompatibility of GLAES with newer Python versions, we decided to create two separate conda environments,
 one for running GLAES (`by-wind`) and one for running the data acquisition (`by-wind-da`).
+
 To create the required environments run:
 
     cd ByWind
@@ -49,8 +50,8 @@ ByWind
 └───...
 ```
 
-Note that the data remains under the original license, see [Used data sources](#used-data-sources) for further
-information on the used data and data acquisition.
+Note that the data remains under the original license, see [Used data sources](#used-data-sources) and the next sections
+for further information on the used data and data acquisition process.
 
 ### Acquire and preprocess geodata via scripts
 
@@ -63,8 +64,8 @@ Activate the `by-wind-da` environment and run the corresponding script, e.g., `p
     conda activate by-wind-da
     python protected-forest-data-acquisition.py
 
-The scripts will typically try to write the results directly to the corresponding input directory, e.g., 
-`/input/Schutzwald/`.
+The scripts will typically try to download the corresponding data and write the results directly to the corresponding 
+input directory, e.g., `/input/Schutzwald/`.
 
 ## Running
 
@@ -77,7 +78,12 @@ The results (.tif files and a CSV) will be written to the output directory.
 
 
 ## Used data sources
+Most of the data sources used are based on the 
+[supplementary materials of Risch et al.](https://www.mdpi.com/1996-1073/15/15/5536/s1?version=1659166850):
+See the section on Onshore wind potential (referring to Section 2.3 in the paper) and especially Table S4 for Bavaria 
+(in short: BY) on pages 12-13.
 
+Additionally, data regarding the Alpine Plan and forest function mapping are used.
 
 |                                                         | Data source                                                                                                   | License / Terms of use                                                                                                                                 |
 |---------------------------------------------------------|---------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
