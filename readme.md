@@ -24,12 +24,17 @@ See the [Conda installation docs](https://conda.io/docs/user-guide/install/downl
 ### Installing dependencies
 
 Due to incompatibility of GLAES with newer Python versions, we decided to create two separate conda environments,
-one for running GLAES (`by-wind`) and one for running the data acquisition (`by-wind-da`).
+one for running GLAES (`by-wind`) and one for running the data acquisition scripts (`by-wind-da`).
+If you're only interested in running GLAES, e.g., for reproducing the results in the paper, you can skip the creation 
+of the `by-wind-da` environment.
 
-To create the required environments run:
+To create the `by-wind` environment run:
 
     cd ByWind
     conda env create --file=environment.yml
+
+To create the `by-wind-da` environment run:
+
     conda env create --file=environment-da.yml
 
 ### Acquire geodata from Zenodo
@@ -53,7 +58,7 @@ ByWind
 Note that the data remains under the original license, see [Used data sources](#used-data-sources) and the next sections
 for further information on the used data and data acquisition process.
 
-### Acquire and preprocess geodata via scripts
+### Alternative: Acquire and preprocess geodata via scripts and manually
 
 Alternatively to downloading the required geodata from Zenodo, you can also acquire and preprocess some of the data 
 using the provided Python scripts.
@@ -92,8 +97,8 @@ Additionally, data regarding the Alpine Plan and forest function mapping are use
 | Land use                                                | https://geodaten.bayern.de/opengeodata/OpenDataDetail.html?pn=atkis_basis_dlm                                 | https://creativecommons.org/licenses/by/4.0/deed.de                                                                                                    |
 | Forest function mapping                                 | https://geoportal.bayern.de/geoportalbayern/details-suche?5&resId=81716c2d-4fd8-4a48-a52f-16826a7728de        | https://creativecommons.org/licenses/by/4.0/deed.de                                                                                                    |
 | Nature conservation                                     | https://gdk.gdi-de.org/geonetwork/srv/api/records/bec888f9-ba0c-42dc-846e-177b8265dafa                        | http://www.gesetze-im-internet.de/bundesrecht/geonutzv/gesamt.pdf                                                                                      |
-| Water protection                                        | https://geoportal.bafg.de/inspire/download/AM/waterProtectionArea/datasetfeed.xml                             |                                                                                                                                                        |
-| Biosphere                                               | https://geodienste.bfn.de/ogc/wfs/schutzgebiet                                                                |                                                                                                                                                        |
+| Water protection                                        | https://geoportal.bafg.de/inspire/download/AM/waterProtectionArea/datasetfeed.xml                             | Copyright: "WasserBLIcK/BfG & Zuständige Behörden der Länder, 2024-10-02."                                                                             |
+| Biosphere                                               | https://geodienste.bfn.de/ogc/wfs/schutzgebiet                                                                | http://www.gesetze-im-internet.de/bundesrecht/geonutzv/gesamt.pdf                                                                                      |
 | Alpine plan                                             | https://geoportal.bayern.de/geoportalbayern/suche/suche?0&q=alpenplan                                         | https://creativecommons.org/licenses/by-nd/4.0/deed.de                                                                                                 |
 | EU-DEM                                                  | https://ec.europa.eu/eurostat/de/web/gisco/geodata/digital-elevation-model/eu-dem#Steigung                    | https://sdi.eea.europa.eu/catalogue/datahub/api/records/3473589f-0854-4601-919e-2e7dd172ff50/formatters/xsl-view?output=pdf&language=eng&approved=true |
 | Historical areas and streams                            | https://download.geofabrik.de/europe/germany/bayern.html                                                      | https://opendatacommons.org/licenses/odbl/                                                                                                             |

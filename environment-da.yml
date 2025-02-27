@@ -1,0 +1,7 @@
+name: by-wind-da
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11.11
+  - geopandas=1.0.1
+  - overpy=0.7
