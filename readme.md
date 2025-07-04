@@ -4,7 +4,7 @@
 
 This is the evaluation repo for The Impact of Forest Use and Distance to Residential Buildings on Wind Potential Areas 
 in Bavaria, Germany.
-See the [paper]() for further information.
+See the [paper](https://eplus.uni-salzburg.at/download/pdf/12103771.pdf) for further information.
 This repo recreates the wind potential area analysis from [Risch et al.](https://www.mdpi.com/1996-1073/15/15/5536) for 
 Bavaria and on this basis explores the impact of forest use and distance to residential buildings on eligible areas for 
 wind turbines in Bavaria through [GLAES](https://github.com/FZJ-IEK3-VSA/glaes)-based eligibility analyses.
@@ -105,6 +105,21 @@ Additionally, data regarding the Alpine Plan and forest function mapping are use
 | Very High Frequency Omnidirectional Range Station (VOR) | OpenStreetMap, see [osm-data-acquisition.py ](osm-data-acquisition.py)                                        | https://opendatacommons.org/licenses/odbl/                                                                                                             |
 | Borders                                                 | https://gdz.bkg.bund.de/index.php/default/open-data/verwaltungsgebiete-1-250-000-stand-01-01-vg250-01-01.html | https://www.govdata.de/dl-de/by-2-0                                                                                                                    |
 
+
+## Citation
+
+````
+ @article{Neumayer_Mitterhofer_2025, 
+    title={Mapping Wind Potential Areas in Bavaria, Germany: The Impact of Forest Use and Distance to Residential Buildings}, 
+    volume={1}, 
+    url={https://eplus.uni-salzburg.at/doi/10.25598/agit/2025-8}, 
+    DOI={10.25598/AGIT/2025-8}, 
+    journal={AGIT Conference}, 
+    publisher={Universitätsbibliothek Salzburg}, 
+    author={Neumayer, Martin and Mitterhofer, Matthias}, 
+    year={2025}
+ }
+````
 
 ## Acknowledgment
 
