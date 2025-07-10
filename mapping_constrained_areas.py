@@ -143,7 +143,6 @@ social_political_constraints = [
     },
 ]
 
-
 physical_constraints = [
     {
         # Lakes
@@ -170,7 +169,6 @@ physical_constraints = [
         "value": "(17-]",
     },
 ]
-
 
 conservation_constraints = [
     {
@@ -203,7 +201,6 @@ conservation_constraints = [
     },
 ]
 
-
 technical_economic_constraints = [
     {
         # Wind speeds
@@ -228,11 +225,11 @@ result_df = pd.DataFrame(
 
 
 for name, constraint_set in all_constraint_sets.items():
-    print(f"Calculating constrained area for {name}")
+    print(f"Calculating constrained area ({name})")
     ec = ExclusionCalculator(
         f"{base_path}/ALKIS-Vereinfacht/VerwaltungsEinheit.shp",
         srs=25832,
-        pixelSize=raster_size,
+        pixelRes=raster_size,
         where="art = 'Bundesland'",
     )
     for constraint in constraint_set:
