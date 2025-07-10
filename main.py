@@ -286,9 +286,7 @@ scenarios = [
 ]
 
 # First run with fixed excludes
-print(
-    f"Running ExclusionCalculator with fixed excludes"
-)
+print(f"Running ExclusionCalculator with fixed excludes")
 ec = ExclusionCalculator(
     f"{base_path}/ALKIS-Vereinfacht/VerwaltungsEinheit.shp",
     srs=25832,
@@ -314,7 +312,7 @@ initial_result_path = f"./output/ByWind_{raster_size}.tif"
 ec.save(initial_result_path)
 
 
-variable_exclude_buffers = range(0, 2000, 100)
+variable_exclude_buffers = range(0, 2100, 100)
 result_df = pd.DataFrame(
     index=variable_exclude_buffers, columns=[name for name, _ in scenarios]
 )
