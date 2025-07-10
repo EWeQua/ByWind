@@ -286,6 +286,9 @@ scenarios = [
 ]
 
 # First run with fixed excludes
+print(
+    f"Running ExclusionCalculator with fixed excludes"
+)
 ec = ExclusionCalculator(
     f"{base_path}/ALKIS-Vereinfacht/VerwaltungsEinheit.shp",
     srs=25832,
@@ -297,7 +300,7 @@ for exclude in [
     *physical_constraints,
     *conservation_constraints,
 ]:
-    print(exclude)
+    print(f"Excluding {exclude}")
     if "source" in exclude and exclude["source"].endswith(".shp"):
         ec.excludeVectorType(**exclude)
     elif "source" in exclude and exclude["source"].endswith(".tif"):
@@ -319,7 +322,7 @@ result_df = pd.DataFrame(
 for name, excludes in scenarios:
     for variable_buffer in variable_exclude_buffers:
         print(
-            f"Running scenario {name} with distance to residential buildings {variable_buffer}"
+            f"Running scenario {name} with distance to residential buildings of {variable_buffer}m"
         )
         # Unrestricted forest use scenario is computed explicitly and at first for performance reasons
         if name == "unrestricted_forest_use":
@@ -333,7 +336,7 @@ for name, excludes in scenarios:
             for residential_exclude in residential_areas:
                 # Update buffer
                 residential_exclude.update({"buffer": variable_buffer})
-                print(residential_exclude)
+                print(f"Excluding {exclude}")
                 new_ec.excludeVectorType(**residential_exclude)
             result_df.at[variable_buffer, name] = new_ec.percentAvailable
             new_ec.save(f"./output/ByWind_{raster_size}_{variable_buffer}_{name}.tif")
@@ -349,6 +352,7 @@ for name, excludes in scenarios:
                 initialValue=unrestricted_forest_use_result_path,
             )
             for exclude in excludes:
+                print(f"Excluding {exclude}")
                 new_ec.excludeVectorType(**exclude)
             result_df.at[variable_buffer, name] = new_ec.percentAvailable
             new_ec.save(f"./output/ByWind_{raster_size}_{variable_buffer}_{name}.tif")
