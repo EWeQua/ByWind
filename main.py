@@ -1,7 +1,7 @@
 import pandas as pd
 from glaes import ExclusionCalculator
 
-base_path = "./input/"
+base_path = "./input"
 hub_height = 120
 diameter = 155
 radius = diameter / 2
@@ -9,7 +9,7 @@ height = hub_height + radius
 
 raster_size = 10
 
-vector_excludes = [
+social_political_constraints = [
     {
         # Buildings health treatment
         "source": f"{base_path}/Gebäude/health.shp",
@@ -43,13 +43,6 @@ vector_excludes = [
         "source": f"{base_path}/Basis-DLM/sie02_f.shp",
         "where": "OBJART ='41002'",
         "buffer": 2 * height,
-    },
-    {
-        # Lakes
-        # Use gew01_f instead of ver04_f as suggested in the supplementary material
-        "source": f"{base_path}/Basis-DLM/gew01_f.shp",
-        "where": "OBJART_TXT='AX_Hafenbecken' OR OBJART_TXT='AX_StehendesGewaesser'",
-        "buffer": 50,
     },
     {
         # Military
@@ -120,17 +113,66 @@ vector_excludes = [
         "buffer": radius,
     },
     {
+        # Secondary roads
+        "source": f"{base_path}/Basis-DLM/ver01_l.shp",
+        "where": "WDM = '1305'",
+        "buffer": radius,
+    },
+    {
+        # DVOR
+        # Acquired from OSM (see osm-data-acquisition.py)
+        "source": f"{base_path}/DVOR/DVOR.shp",
+        "buffer": 10000,
+    },
+    {
+        # VOR
+        # Acquired from OSM (see osm-data-acquisition.py)
+        "source": f"{base_path}/DVOR/VOR.shp",
+        "buffer": 15000,
+    },
+    {
+        # Historical
+        # Acquired from OSM (see geofabrik-preprocessing.py)
+        "source": f"{base_path}/OSM/gis_osm_pois_a_free_1.shp",
+    },
+    {
+        # Borders
+        # Preprocessed with QGIS: Vector > Geometry Tools > Polygons to Lines
+        "source": f"{base_path}/Grenzen/VG250_STA.shp",
+        "buffer": 100,
+    },
+]
+
+
+physical_constraints = [
+    {
+        # Lakes
+        # Use gew01_f instead of ver04_f as suggested in the supplementary material
+        "source": f"{base_path}/Basis-DLM/gew01_f.shp",
+        "where": "OBJART_TXT='AX_Hafenbecken' OR OBJART_TXT='AX_StehendesGewaesser'",
+        "buffer": 50,
+    },
+    {
         # Rivers
         "source": f"{base_path}/Basis-DLM/gew01_f.shp",
         "where": "OBJART_TXT='AX_Fliessgewaesser' OR OBJART_TXT='AX_Kanal' OR OBJART_TXT='AX_Wasserlauf' OR OBJART_TXT='AX_Gewaesserachse'",
         "buffer": 50,
     },
     {
-        # Secondary roads
-        "source": f"{base_path}/Basis-DLM/ver01_l.shp",
-        "where": "WDM = '1305'",
-        "buffer": radius,
+        # Stream
+        # Acquired from OSM (see geofabrik-preprocessing.py)
+        "source": f"{base_path}/OSM/gis_osm_waterways_free_1.shp",
     },
+    {
+        # EU-DEM Slope
+        # Preprocessed with QGIS: Crop raster to extent of Bavaria, calculate slope
+        "source": f"{base_path}/EU-DEM/EU-DEM-Slope-BY.tif",
+        "value": "(17-]",
+    },
+]
+
+
+conservation_constraints = [
     {
         # National park
         "source": f"{base_path}/nlp_epsg25832_shp/nlp_epsg25832_shp.shp",
@@ -159,41 +201,16 @@ vector_excludes = [
         # Acquired from https://geodienste.bfn.de/ogc/wfs/schutzgebiet
         "source": f"{base_path}/Biosphäre/Kernzone.shp",
     },
-    {
-        # DVOR
-        # Acquired from OSM (see osm-data-acquisition.py)
-        "source": f"{base_path}/DVOR/DVOR.shp",
-        "buffer": 10000,
-    },
-    {
-        # VOR
-        # Acquired from OSM (see osm-data-acquisition.py)
-        "source": f"{base_path}/DVOR/VOR.shp",
-        "buffer": 15000,
-    },
-    {
-        # Historical
-        # Acquired from OSM (see geofabrik-preprocessing.py)
-        "source": f"{base_path}/OSM/gis_osm_pois_a_free_1.shp",
-    },
-    {
-        # Stream
-        # Acquired from OSM (see geofabrik-preprocessing.py)
-        "source": f"{base_path}/OSM/gis_osm_waterways_free_1.shp",
-    },
-    {
-        # Borders
-        # Preprocessed with QGIS: Vector > Geometry Tools > Polygons to Lines
-        "source": f"{base_path}/Grenzen/VG250_STA.shp",
-        "buffer": 100,
-    },
 ]
-raster_excludes = [
+
+
+technical_economic_constraints = [
     {
-        # EU-DEM Slope
-        # Preprocessed with QGIS: Crop raster to extent of Bavaria, calculate slope
-        "source": f"{base_path}/EU-DEM/EU-DEM-Slope-BY.tif",
-        "value": "(17-]",
+        # Wind speeds
+        # Preprocessed with QGIS (export to GeoTIFF) and windspeed-preprocessing.py (create a mask of zeros, indicating
+        # areas below the wind speed threshold)
+        "source": f"{base_path}/Windgeschwindigkeit/windspeed_120_4.5m.tif",
+        "value": 0,
     },
 ]
 
@@ -207,76 +224,133 @@ forest_functions = [
     "Sichtschutzwald",
 ]
 
-restricted_forest_use = [
+protected_forests = [
     {"source": f"{base_path}/Schutzwald/{function}.shp"}
     for function in forest_functions
 ]
-forest_use = [
+all_forests = [
     {
         # Forest
         "source": f"{base_path}/Basis-DLM/veg02_f.shp"
     }
 ]
-variable_excludes = [
+residential_areas = [
     {
         # Buildings residential
-        "source": f"{base_path}/Gebäude/residential.shp"
+        "source": f"{base_path}/Gebäude/residential.shp",
+        # Custom flag to indicate that a buffer should be added / updated later on
+        "update_buffer": True,
     },
     {
         # Inner areas
-        "source": f"{base_path}/Basis-DLM/sie01_f.shp"
+        "source": f"{base_path}/Basis-DLM/sie01_f.shp",
+        # Custom flag to indicate that a buffer should be added / updated later on
+        "update_buffer": True,
     },
 ]
 
-# Specify what to exclude and in what order
-exclude_configurations = [
-    ("forest_use", variable_excludes),
-    ("restricted_forest_use", restricted_forest_use),
-    ("no_forest_use", forest_use),
+# The order of scenarios matters: For performance reasons, the unrestricted_forest_use scenario is calculated first and
+# forms the basis for all other scenarios. All other scenarios load the results from unrestricted_forest_use and only
+# exclude further constrained areas.
+scenarios = [
+    (
+        # In the unrestricted forest use scenario, only residential buildings are excluded implicitly
+        "unrestricted_forest_use",
+        None,
+    ),
+    (
+        # In the restricted forest use scenario, additionally protected forests have to be excluded
+        "restricted_forest_use",
+        protected_forests,
+    ),
+    (
+        # In the no_forest_use scenario, protected forests and all forests have to be excluded
+        "no_forest_use",
+        [*protected_forests, *all_forests],
+    ),
+    (
+        # In the unrestricted forest use scenario, technical economic constraints are excluded
+        "unrestricted_forest_use_economic",
+        technical_economic_constraints,
+    ),
+    (
+        # In the restricted forest use scenario, technical economic constraints and protected forests have to be excluded
+        "restricted_forest_use_economic",
+        [*protected_forests, *technical_economic_constraints],
+    ),
+    (
+        # In the no_forest_use scenario, technical economic constraints, protected forests and all forests have to be excluded
+        "no_forest_use_economic",
+        [*protected_forests, *all_forests, *technical_economic_constraints],
+    ),
 ]
 
-variable_exclude_buffers = range(0, 2000, 100)
-result_df = pd.DataFrame(
-    index=variable_exclude_buffers, columns=[name for name, _ in exclude_configurations]
-)
-
+# First run with fixed excludes
 ec = ExclusionCalculator(
     f"{base_path}/ALKIS-Vereinfacht/VerwaltungsEinheit.shp",
     srs=25832,
-    pixelSize=raster_size,
+    pixelRes=raster_size,
     where="art = 'Bundesland'",
 )
-for exclude in vector_excludes:
+for exclude in [
+    *social_political_constraints,
+    *physical_constraints,
+    *conservation_constraints,
+]:
     print(exclude)
-    ec.excludeVectorType(**exclude)
-for exclude in raster_excludes:
-    print(exclude)
-    ec.excludeRasterType(**exclude)
+    if "source" in exclude and exclude["source"].endswith(".shp"):
+        ec.excludeVectorType(**exclude)
+    elif "source" in exclude and exclude["source"].endswith(".tif"):
+        ec.excludeRasterType(**exclude)
+    else:
+        print(f"Unknown exclude type ignored: {exclude.source}")
 
-# ec.draw()
-# plt.show()
+
 print(ec.percentAvailable)
-ec.save(f"./output/ByWind_{raster_size}.tif")
+initial_result_path = f"./output/ByWind_{raster_size}.tif"
+ec.save(initial_result_path)
 
-for variable_buffer in variable_exclude_buffers:
-    new_ec = ExclusionCalculator(
-        f"{base_path}/ALKIS-Vereinfacht/VerwaltungsEinheit.shp",
-        srs=25832,
-        pixelSize=raster_size,
-        where="art = 'Bundesland'",
-        initialValue=f"./output/ByWind_{raster_size}.tif",
-    )
-    for name, excludes in exclude_configurations:
-        for exclude in excludes:
-            # Update buffer
-            if name == "forest_use":
-                exclude.update({"buffer": variable_buffer})
-            print(exclude)
-            new_ec.excludeVectorType(**exclude)
-        print(new_ec.percentAvailable)
-        result_df.at[variable_buffer, name] = new_ec.percentAvailable
 
-        # new_ec.draw()
-        # plt.show()
-        new_ec.save(f"./output/ByWind_{raster_size}_{variable_buffer}_{name}.tif")
-    result_df.to_csv(f"./output/ByWind_results.csv")
+variable_exclude_buffers = range(0, 2000, 100)
+result_df = pd.DataFrame(
+    index=variable_exclude_buffers, columns=[name for name, _ in scenarios]
+)
+
+for name, excludes in scenarios:
+    for variable_buffer in variable_exclude_buffers:
+        print(
+            f"Running scenario {name} with distance to residential buildings {variable_buffer}"
+        )
+        # Unrestricted forest use scenario is computed explicitly and at first for performance reasons
+        if name == "unrestricted_forest_use":
+            new_ec = ExclusionCalculator(
+                f"{base_path}/ALKIS-Vereinfacht/VerwaltungsEinheit.shp",
+                srs=25832,
+                pixelRes=raster_size,
+                where="art = 'Bundesland'",
+                initialValue=initial_result_path,
+            )
+            for residential_exclude in residential_areas:
+                # Update buffer
+                residential_exclude.update({"buffer": variable_buffer})
+                print(residential_exclude)
+                new_ec.excludeVectorType(**residential_exclude)
+            result_df.at[variable_buffer, name] = new_ec.percentAvailable
+            new_ec.save(f"./output/ByWind_{raster_size}_{variable_buffer}_{name}.tif")
+
+        else:
+            # All scenarios are based on unrestricted forest use results and only exclude additional areas
+            unrestricted_forest_use_result_path = f"./output/ByWind_{raster_size}_{variable_buffer}_unrestricted_forest_use.tif"
+            new_ec = ExclusionCalculator(
+                f"{base_path}/ALKIS-Vereinfacht/VerwaltungsEinheit.shp",
+                srs=25832,
+                pixelRes=raster_size,
+                where="art = 'Bundesland'",
+                initialValue=unrestricted_forest_use_result_path,
+            )
+            for exclude in excludes:
+                new_ec.excludeVectorType(**exclude)
+            result_df.at[variable_buffer, name] = new_ec.percentAvailable
+            new_ec.save(f"./output/ByWind_{raster_size}_{variable_buffer}_{name}.tif")
+
+result_df.to_csv(f"./output/ByWind_results.csv")
