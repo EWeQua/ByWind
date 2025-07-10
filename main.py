@@ -334,7 +334,7 @@ for name, excludes in scenarios:
             for residential_exclude in residential_areas:
                 # Update buffer
                 residential_exclude.update({"buffer": variable_buffer})
-                print(f"Excluding {exclude}")
+                print(f"Excluding {residential_exclude}")
                 new_ec.excludeVectorType(**residential_exclude)
             result_df.at[variable_buffer, name] = new_ec.percentAvailable
             new_ec.save(f"./output/ByWind_{raster_size}_{variable_buffer}_{name}.tif")
