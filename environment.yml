@@ -3,4 +3,4 @@ channels:
   - conda-forge
 dependencies:
   - python=3.8.15
-  - glaes=1.2.1
+  - glaes=1.3.0
