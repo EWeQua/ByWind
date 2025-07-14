@@ -10,14 +10,14 @@ os.makedirs(results_file_path, exist_ok=True)
 
 api = overpy.Overpass()
 
-# Query taken from Supplementary Material of Risch et al.
+# Query adapted from Supplementary Material of Risch et al.
+# We choose an area larger than Germany to include airmark beacons that are outside Germany but close enough to affect
+# eligible areas due to the large buffers applied
 dvor = api.query(
     """
     [out:json][timeout:250];
-    area[name="Deutschland"]->.searchArea;
-    (node[airmark=beacon](area.searchArea););
-    (._;>;);
-    out meta;
+    nwr["airmark"="beacon"](44.653024159812,-0.21972656250000003,56.65622649350222,22.96142578125);
+    out geom;
     """
 )
 
