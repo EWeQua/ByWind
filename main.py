@@ -351,7 +351,12 @@ for name, excludes in scenarios:
             )
             for exclude in excludes:
                 print(f"Excluding {exclude}")
-                new_ec.excludeVectorType(**exclude)
+                if "source" in exclude and exclude["source"].endswith(".shp"):
+                    new_ec.excludeVectorType(**exclude)
+                elif "source" in exclude and exclude["source"].endswith(".tif"):
+                    new_ec.excludeRasterType(**exclude)
+                else:
+                    print(f"Unknown exclude type ignored: {exclude.source}")
             result_df.at[variable_buffer, name] = new_ec.percentAvailable
             new_ec.save(f"./output/ByWind_{raster_size}_{variable_buffer}_{name}.tif")
 
