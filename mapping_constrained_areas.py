@@ -122,7 +122,7 @@ social_political_constraints = [
         # DVOR
         # Acquired from OSM (see osm-data-acquisition.py)
         "source": f"{base_path}/DVOR/DVOR.shp",
-        "buffer": 10000,
+        "buffer": 7000,
     },
     {
         # VOR
@@ -233,6 +233,7 @@ for name, constraint_set in all_constraint_sets.items():
         where="art = 'Bundesland'",
     )
     for constraint in constraint_set:
+        print(f"Excluding {constraint}")
         if constraint["source"].endswith(".shp"):
             ec.excludeVectorType(**constraint)
         elif constraint["source"].endswith(".tif"):
