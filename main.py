@@ -163,7 +163,7 @@ vector_excludes = [
         # DVOR
         # Acquired from OSM (see osm-data-acquisition.py)
         "source": f"{base_path}/DVOR/DVOR.shp",
-        "buffer": 10000,
+        "buffer": 7000,
     },
     {
         # VOR
