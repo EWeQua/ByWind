@@ -285,79 +285,82 @@ scenarios = [
     ),
 ]
 
-# First run with fixed excludes
-print(f"Running ExclusionCalculator with fixed excludes")
-ec = ExclusionCalculator(
-    f"{base_path}/ALKIS-Vereinfacht/VerwaltungsEinheit.shp",
-    srs=25832,
-    pixelRes=raster_size,
-    where="art = 'Bundesland'",
-)
-for exclude in [
-    *social_political_constraints,
-    *physical_constraints,
-    *conservation_constraints,
-]:
-    print(f"Excluding {exclude}")
-    if "source" in exclude and exclude["source"].endswith(".shp"):
-        ec.excludeVectorType(**exclude)
-    elif "source" in exclude and exclude["source"].endswith(".tif"):
-        ec.excludeRasterType(**exclude)
-    else:
-        print(f"Unknown exclude type ignored: {exclude.source}")
-
-
-print(ec.percentAvailable)
-initial_result_path = f"./output/ByWind_{raster_size}.tif"
-ec.save(initial_result_path)
-
-
-variable_exclude_buffers = range(0, 2100, 100)
-result_df = pd.DataFrame(
-    index=variable_exclude_buffers, columns=[name for name, _ in scenarios]
-)
-
-for name, excludes in scenarios:
-    for variable_buffer in variable_exclude_buffers:
-        print(
-            f"Running scenario {name} with distance to residential buildings of {variable_buffer}m"
-        )
-        # Unrestricted forest use scenario is computed explicitly and at first for performance reasons
-        if name == "unrestricted_forest_use":
-            new_ec = ExclusionCalculator(
-                f"{base_path}/ALKIS-Vereinfacht/VerwaltungsEinheit.shp",
-                srs=25832,
-                pixelRes=raster_size,
-                where="art = 'Bundesland'",
-                initialValue=initial_result_path,
-            )
-            for residential_exclude in residential_areas:
-                # Update buffer
-                residential_exclude.update({"buffer": variable_buffer})
-                print(f"Excluding {residential_exclude}")
-                new_ec.excludeVectorType(**residential_exclude)
-            result_df.at[variable_buffer, name] = new_ec.percentAvailable
-            new_ec.save(f"./output/ByWind_{raster_size}_{variable_buffer}_{name}.tif")
-
+if __name__ == "__main__":
+    # First run with fixed excludes
+    print(f"Running ExclusionCalculator with fixed excludes")
+    ec = ExclusionCalculator(
+        f"{base_path}/ALKIS-Vereinfacht/VerwaltungsEinheit.shp",
+        srs=25832,
+        pixelRes=raster_size,
+        where="art = 'Bundesland'",
+    )
+    for exclude in [
+        *social_political_constraints,
+        *physical_constraints,
+        *conservation_constraints,
+    ]:
+        print(f"Excluding {exclude}")
+        if "source" in exclude and exclude["source"].endswith(".shp"):
+            ec.excludeVectorType(**exclude)
+        elif "source" in exclude and exclude["source"].endswith(".tif"):
+            ec.excludeRasterType(**exclude)
         else:
-            # All scenarios are based on unrestricted forest use results and only exclude additional areas
-            unrestricted_forest_use_result_path = f"./output/ByWind_{raster_size}_{variable_buffer}_unrestricted_forest_use.tif"
-            new_ec = ExclusionCalculator(
-                f"{base_path}/ALKIS-Vereinfacht/VerwaltungsEinheit.shp",
-                srs=25832,
-                pixelRes=raster_size,
-                where="art = 'Bundesland'",
-                initialValue=unrestricted_forest_use_result_path,
-            )
-            for exclude in excludes:
-                print(f"Excluding {exclude}")
-                if "source" in exclude and exclude["source"].endswith(".shp"):
-                    new_ec.excludeVectorType(**exclude)
-                elif "source" in exclude and exclude["source"].endswith(".tif"):
-                    new_ec.excludeRasterType(**exclude)
-                else:
-                    print(f"Unknown exclude type ignored: {exclude.source}")
-            result_df.at[variable_buffer, name] = new_ec.percentAvailable
-            new_ec.save(f"./output/ByWind_{raster_size}_{variable_buffer}_{name}.tif")
+            print(f"Unknown exclude type ignored: {exclude.source}")
 
-result_df.to_csv(f"./output/ByWind_results.csv")
+    print(ec.percentAvailable)
+    initial_result_path = f"./output/ByWind_{raster_size}.tif"
+    ec.save(initial_result_path)
+
+    variable_exclude_buffers = range(0, 2100, 100)
+    result_df = pd.DataFrame(
+        index=variable_exclude_buffers, columns=[name for name, _ in scenarios]
+    )
+
+    for name, excludes in scenarios:
+        for variable_buffer in variable_exclude_buffers:
+            print(
+                f"Running scenario {name} with distance to residential buildings of {variable_buffer}m"
+            )
+            # Unrestricted forest use scenario is computed explicitly and at first for performance reasons
+            if name == "unrestricted_forest_use":
+                new_ec = ExclusionCalculator(
+                    f"{base_path}/ALKIS-Vereinfacht/VerwaltungsEinheit.shp",
+                    srs=25832,
+                    pixelRes=raster_size,
+                    where="art = 'Bundesland'",
+                    initialValue=initial_result_path,
+                )
+                for residential_exclude in residential_areas:
+                    # Update buffer
+                    residential_exclude.update({"buffer": variable_buffer})
+                    print(f"Excluding {residential_exclude}")
+                    new_ec.excludeVectorType(**residential_exclude)
+                result_df.at[variable_buffer, name] = new_ec.percentAvailable
+                new_ec.save(
+                    f"./output/ByWind_{raster_size}_{variable_buffer}_{name}.tif"
+                )
+
+            else:
+                # All scenarios are based on unrestricted forest use results and only exclude additional areas
+                unrestricted_forest_use_result_path = f"./output/ByWind_{raster_size}_{variable_buffer}_unrestricted_forest_use.tif"
+                new_ec = ExclusionCalculator(
+                    f"{base_path}/ALKIS-Vereinfacht/VerwaltungsEinheit.shp",
+                    srs=25832,
+                    pixelRes=raster_size,
+                    where="art = 'Bundesland'",
+                    initialValue=unrestricted_forest_use_result_path,
+                )
+                for exclude in excludes:
+                    print(f"Excluding {exclude}")
+                    if "source" in exclude and exclude["source"].endswith(".shp"):
+                        new_ec.excludeVectorType(**exclude)
+                    elif "source" in exclude and exclude["source"].endswith(".tif"):
+                        new_ec.excludeRasterType(**exclude)
+                    else:
+                        print(f"Unknown exclude type ignored: {exclude.source}")
+                result_df.at[variable_buffer, name] = new_ec.percentAvailable
+                new_ec.save(
+                    f"./output/ByWind_{raster_size}_{variable_buffer}_{name}.tif"
+                )
+
+    result_df.to_csv(f"./output/ByWind_results.csv")
