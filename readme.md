@@ -6,12 +6,13 @@ This is the evaluation repo for The Impact of Forest Use and Distance to Residen
 in Bavaria, Germany.
 See the [paper](https://eplus.uni-salzburg.at/agit/periodical/titleinfo/12103771) for further information.
 This repo recreates the wind potential area analysis from [Risch et al.](https://www.mdpi.com/1996-1073/15/15/5536) for 
-Bavaria and on this basis explores the impact of forest use and distance to residential buildings on eligible areas for 
-wind turbines in Bavaria through [GLAES](https://github.com/FZJ-IEK3-VSA/glaes)-based eligibility analyses.
-In detail the distance to residential buildings is increased from 0 to 2000 metres (approx. 10H assuming a hub height of 
-120 and a rotor radius of 155 metres) in three scenarios: Unrestricted forest use, restricted forest use according to 
-the forest function mapping and without the use of forests.
-Then the results in terms of eligible areas are visualized and discussed in the paper within the context of the current 
+Bavaria and on this basis explores the impact of forest use, distance to residential buildings and economic constraints
+on eligible areas for wind turbines in Bavaria through [GLAES](https://github.com/FZJ-IEK3-VSA/glaes)-based eligibility analyses.
+In detail, the distance to residential buildings is increased from 0 to 2000 metres in three scenarios: Unrestricted 
+forest use, restricted forest use according to the [forest function mapping](https://www.stmelf.bayern.de/wald/wald_mensch/waldfunktionsplanung-in-bayern/index.html) 
+and without the use of forests.
+As an extension, every scenario is considered with and without economic constraints, i.e. low wind speeds.
+In the paper, the results in terms of eligible areas are visualised and discussed within the context of the current 
 legal framework.
 
 ## Preparation
@@ -62,7 +63,9 @@ for further information on the used data and data acquisition process.
 
 Alternatively to downloading the required geodata from Zenodo, you can also acquire and preprocess some of the data 
 using the provided Python scripts.
-Note that this might result in different results than in the paper as the data sources might have changed.
+Note that some data has to be acquired manually, see [Used data sources](#used-data-sources).
+Also note that acquiring data on your own might result in different results than in the paper as the data sources might 
+have changed in the meantime.
 
 Activate the `by-wind-da` environment and run the corresponding script, e.g., `protected-forest-data-acquisition.py`:
 
@@ -73,8 +76,28 @@ The scripts will typically try to download the corresponding data and write the 
 input directory, e.g., `/input/Schutzwald/`.
 
 ## Running
+Once the required geodata is downloaded, you can create maps of the constrained areas or run the eligibility analyses.
+The mapping of constrained areas is optional and not required for running the eligibility analyses.
 
-Once the required geodata is in place, activate the `by-wind` environment and run `main.py`:
+
+### Optional: Mapping constrained areas
+
+Activate the `by-wind` environment and run `mapping_constrained_areas.py`:
+
+    conda activate by-wind
+    python mapping_constrained_areas.py
+
+To understand the spatial distribution of constraints and their interaction, constraints are classified into four 
+categories (social political, physical, conservation and technical economic) according to 
+[Ryberg et al.](https://www.mdpi.com/1996-1073/11/5/1246) before mapping.
+The results, 4 .tif files, one for each constraint category, and a CSV, will be written to the output directory.
+
+Note that residential areas and forests are not included in the maps as their influence is analysed in greater detail in 
+the eligibility analyses.
+
+### Eligibility analyses
+
+To run the eligibility analyses, activate the `by-wind` environment and run `main.py`:
 
     conda activate by-wind
     python main.py
@@ -88,7 +111,7 @@ Most of the data sources used are based on the
 See the section on Onshore wind potential (referring to Section 2.3 in the paper) and especially Table S4 for Bavaria 
 (in short: BY) on pages 12-13.
 
-Additionally, data regarding the Alpine Plan and forest function mapping are used.
+Additionally, data regarding the Alpine Plan, forest function mapping and wind speeds are used.
 
 |                                                         | Data source                                                                                                   | License / Terms of use                                                                                                                                 |
 |---------------------------------------------------------|---------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
