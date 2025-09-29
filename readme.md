@@ -40,7 +40,7 @@ To create the `by-wind-da` environment run:
 
 ### Acquire geodata from Zenodo
 
-Download the required [geodata from Zenodo](https://zenodo.org/records/14935008) and unpack it into the input directory.
+Download the required [geodata from Zenodo](https://zenodo.org/records/16940499) and unpack it into the input directory.
 Afterward, your directory structure should look like this:
 
 ```
